@@ -1,4 +1,6 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# getImage.ai
+
+This is the getImage.ai Next.js project — a generative image studio built with Next.js.
 
 ## Getting Started
 
@@ -14,7 +16,7 @@ pnpm dev
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) with your browser to see getImage.ai running locally.
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
