@@ -5,7 +5,7 @@ import { useStudioStore } from '@/store/useStudioStore';
 import { SidebarSettings } from './SidebarSettings';
 import { GallerySidebar } from './GallerySidebar';
 import { StopwatchTimer } from './StopwatchTimer';
-import { Crop, AlertCircle, RefreshCcw, Download, Sparkles } from 'lucide-react';
+import { Crop, AlertCircle, RefreshCcw, Download, Sparkles, Settings, History, X } from 'lucide-react';
 import ReactCrop, { type Crop as CropType, type PixelCrop, centerCrop, makeAspectCrop } from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
 
@@ -130,13 +130,13 @@ export function MainCanvas() {
 
         {/* Mobile sidebar toggles */}
         <div className="absolute top-4 left-4 md:hidden z-50">
-          <button onClick={toggleLeft} className="p-2 bg-zinc-900/80 rounded-lg border border-white/5">
-            ☰
+          <button onClick={toggleLeft} className="p-2 bg-zinc-900/80 rounded-lg border border-white/5 text-zinc-300 hover:text-white backdrop-blur-md">
+            <Settings className="w-5 h-5" />
           </button>
         </div>
         <div className="absolute top-4 right-4 md:hidden z-50">
-          <button onClick={toggleRight} className="p-2 bg-zinc-900/80 rounded-lg border border-white/5">
-            ◻
+          <button onClick={toggleRight} className="p-2 bg-zinc-900/80 rounded-lg border border-white/5 text-zinc-300 hover:text-white backdrop-blur-md">
+            <History className="w-5 h-5" />
           </button>
         </div>
 
@@ -222,23 +222,25 @@ export function MainCanvas() {
 
       {/* Mobile overlays for sidebars */}
       {isLeftOpen && (
-        <div className="fixed inset-0 z-[90] bg-black/80 md:hidden">
-          <div className="w-4/5 max-w-xs h-full bg-[#050505]">
+        <div className="fixed inset-0 z-[90] bg-black/80 backdrop-blur-sm md:hidden flex">
+          <div className="w-4/5 max-w-xs h-full bg-[#050505] shadow-2xl relative">
             <SidebarSettings />
           </div>
-          <div className="absolute top-4 right-4">
-            <button onClick={toggleLeft} className="p-2 bg-zinc-900/80 rounded-lg border border-white/5">Close</button>
-          </div>
+          <div className="flex-1" onClick={toggleLeft} />
+          <button onClick={toggleLeft} className="absolute top-4 right-4 p-2 bg-zinc-900/80 rounded-lg border border-white/5 text-zinc-300 backdrop-blur-md shadow-xl">
+            <X className="w-5 h-5" />
+          </button>
         </div>
       )}
       {isRightOpen && (
-        <div className="fixed inset-0 z-[90] bg-black/80 md:hidden">
-          <div className="ml-auto w-4/5 max-w-xs h-full bg-black">
+        <div className="fixed inset-0 z-[90] bg-black/80 backdrop-blur-sm md:hidden flex">
+          <div className="flex-1" onClick={toggleRight} />
+          <div className="w-4/5 max-w-xs h-full bg-black shadow-2xl relative">
             <GallerySidebar />
           </div>
-          <div className="absolute top-4 left-4">
-            <button onClick={toggleRight} className="p-2 bg-zinc-900/80 rounded-lg border border-white/5">Close</button>
-          </div>
+          <button onClick={toggleRight} className="absolute top-4 left-4 p-2 bg-zinc-900/80 rounded-lg border border-white/5 text-zinc-300 backdrop-blur-md shadow-xl">
+            <X className="w-5 h-5" />
+          </button>
         </div>
       )}
 
