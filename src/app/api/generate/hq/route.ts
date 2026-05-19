@@ -28,7 +28,7 @@ export async function POST(req: Request) {
     let res: Response;
 
     if (useHuggingFace) {
-      const hfUrl = "https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-xl-base-1.0";
+      const hfUrl = process.env.HUGGINGFACE_API_URL || "https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-xl-base-1.0";
       res = await fetch(hfUrl, {
         method: "POST",
         headers: {
@@ -52,7 +52,8 @@ export async function POST(req: Request) {
     } else {
       // Using Pollinations High-Quality Flux Realism model when Hugging Face is not selected/available.
       const seed = Math.floor(Math.random() * 100000);
-      const hqUrl = `https://pollinations.ai/p/${encodeURIComponent(enhanced_prompt)}?width=${width}&height=${height}&model=flux-realism&nologo=true&seed=${seed}`;
+      const baseUrl = process.env.POLLINATIONS_HQ_API_URL || "https://pollinations.ai/p/";
+      const hqUrl = `${baseUrl}${encodeURIComponent(enhanced_prompt)}?width=${width}&height=${height}&model=flux-realism&nologo=true&seed=${seed}`;
       res = await fetch(hqUrl, {
         method: "GET",
       });

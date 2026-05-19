@@ -16,7 +16,7 @@ export async function POST(req: Request) {
     // 1. Combine enhancing and fast preview
     let enhancedPrompt = prompt;
     try {
-      const groqUrl = "https://api.groq.com/openai/v1/chat/completions";
+      const groqUrl = process.env.GROQ_API_URL || "https://api.groq.com/openai/v1/chat/completions";
       const groqRes = await fetch(groqUrl, {
         method: "POST",
         headers: {
@@ -24,7 +24,7 @@ export async function POST(req: Request) {
           "Authorization": `Bearer ${process.env.GROQ_API_KEY}`
         },
         body: JSON.stringify({
-          model: "llama-3.1-8b-instant",
+          model: process.env.GROQ_MODEL || "llama-3.1-8b-instant",
           temperature: typeof creativity === 'number' ? creativity : 0.7,
           max_tokens: 75,
           messages: [
@@ -59,7 +59,8 @@ export async function POST(req: Request) {
       height = 512;
     }
     
-    const aiUrl = `https://image.pollinations.ai/prompt/${safePrompt}?width=${width}&height=${height}&model=turbo&nologo=true&seed=${randomSeed}`;
+    const baseUrl = process.env.POLLINATIONS_PREVIEW_API_URL || "https://image.pollinations.ai/prompt/";
+    const aiUrl = `${baseUrl}${safePrompt}?width=${width}&height=${height}&model=turbo&nologo=true&seed=${randomSeed}`;
 
     const response = await fetch(aiUrl, {
       headers: {
@@ -103,7 +104,8 @@ export async function POST(req: Request) {
     console.warn("Preview generation error:", (error as Error)?.message || String(error));
     
     try {
-      const fallbackResponse = await fetch("https://picsum.photos/1024/1024");
+      const fallbackUrl = process.env.FALLBACK_IMAGE_URL || "https://picsum.photos/1024/1024";
+      const fallbackResponse = await fetch(fallbackUrl);
       const fallbackBuffer = await fallbackResponse.arrayBuffer();
       const fallbackBase64 = `data:image/jpeg;base64,${Buffer.from(fallbackBuffer).toString("base64")}`;
       
