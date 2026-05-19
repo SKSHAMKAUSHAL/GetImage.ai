@@ -112,7 +112,19 @@ export function MainCanvas() {
       <div className="absolute inset-0 opacity-[0.03] pointer-events-none"
         style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '24px 24px' }} />
 
-
+      {/* Error Toast */}
+      {error && !isGenerating && (
+        <div className="absolute top-6 z-50 flex items-center gap-3 bg-red-950/80 border border-red-500/50 text-red-200 px-6 py-4 rounded-xl shadow-2xl backdrop-blur-md">
+          <AlertCircle className="w-5 h-5 text-red-400 shrink-0" />
+          <span className="font-medium text-sm">{error}</span>
+          <button
+            onClick={() => { setError(null); generateImage(); }}
+            className="ml-4 p-2 bg-red-500/20 hover:bg-red-500/30 rounded-md transition-colors flex items-center gap-2 text-sm font-semibold"
+          >
+            <RefreshCcw className="w-4 h-4" /> Retry
+          </button>
+        </div>
+      )}
 
       <div className="relative w-full h-full max-w-4xl flex items-center justify-center">
 
@@ -129,7 +141,7 @@ export function MainCanvas() {
         </div>
 
         {/* Skeleton + Stopwatch (shown while API is running OR image is loading in browser) */}
-        {showSkeleton && !error && (
+        {showSkeleton && (
           <div className="absolute inset-0 flex items-center justify-center z-10 flex-col gap-6">
             <div className="relative w-full max-w-2xl aspect-[4/3] bg-zinc-800/50 border border-zinc-700/50 rounded-2xl overflow-hidden shadow-2xl">
               <div className="absolute inset-0 overflow-hidden">
@@ -138,25 +150,6 @@ export function MainCanvas() {
               <div className="absolute inset-0 flex items-center justify-center">
                 <StopwatchTimer isRunning={showSkeleton} />
               </div>
-            </div>
-          </div>
-        )}
-
-        {/* Centered Error State */}
-        {error && !isGenerating && (
-          <div className="absolute inset-0 flex items-center justify-center z-20">
-            <div className="flex flex-col items-center gap-4 bg-zinc-900/80 backdrop-blur-xl border border-red-500/30 p-8 rounded-3xl shadow-[0_0_50px_rgba(239,68,68,0.15)] text-center max-w-md w-full mx-4">
-              <div className="w-16 h-16 rounded-full bg-red-500/10 flex items-center justify-center mb-2">
-                <AlertCircle className="w-8 h-8 text-red-400" />
-              </div>
-              <h3 className="text-xl font-semibold text-white">Generation Failed</h3>
-              <p className="text-sm text-zinc-400 leading-relaxed mb-4">{error}</p>
-              <button
-                onClick={() => { setError(null); generateImage(); }}
-                className="flex items-center gap-2 px-6 py-3 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-300 rounded-xl transition-all shadow-lg font-medium"
-              >
-                <RefreshCcw className="w-4 h-4" /> Try Again
-              </button>
             </div>
           </div>
         )}
@@ -171,30 +164,28 @@ export function MainCanvas() {
               src={currentImage}
               alt="Generated Result"
               crossOrigin="anonymous"
-              className="max-w-full max-h-[70vh] rounded-xl shadow-[0_0_50px_rgba(0,0,0,0.5)] object-contain"
+              className="max-w-full max-h-[80vh] rounded-2xl shadow-2xl ring-1 ring-zinc-700/50 object-contain"
               onLoad={handleImageLoad}
               onError={handleImageError}
             />
 
             {/* Action Buttons */}
-            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-4 group-hover:translate-y-0 flex items-center gap-3 bg-white/10 backdrop-blur-xl border border-white/20 p-2 rounded-2xl shadow-2xl">
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0 flex gap-2">
               <button
                 onClick={() => setIsCropModalOpen(true)}
-                className="flex items-center justify-center w-10 h-10 rounded-xl bg-white/10 hover:bg-white/20 text-white transition-all"
-                title="Crop & Edit"
+                className="flex items-center gap-2 bg-zinc-900/90 border border-zinc-700 hover:border-purple-500/50 text-white px-4 py-2 rounded-lg backdrop-blur-md shadow-xl transition-all"
               >
-                <Crop className="w-5 h-5" />
+                <Crop className="w-4 h-4" />
+                <span className="text-sm font-medium">Crop & Edit</span>
               </button>
-              <div className="w-px h-6 bg-white/20" />
               <a
                 href={currentImage}
                 download="generation.jpg"
                 target="_blank"
                 rel="noreferrer"
-                className="flex items-center justify-center w-10 h-10 rounded-xl bg-white/10 hover:bg-white/20 text-white transition-all"
-                title="Download"
+                className="flex items-center gap-2 bg-zinc-900/90 border border-zinc-700 hover:border-purple-500/50 text-white px-4 py-2 rounded-lg backdrop-blur-md shadow-xl transition-all"
               >
-                <Download className="w-5 h-5" />
+                <Download className="w-4 h-4" />
               </a>
             </div>
 

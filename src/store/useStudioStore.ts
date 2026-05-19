@@ -36,6 +36,7 @@ interface StudioState {
   setCurrentImage: (url: string) => void;
   setError: (error: string | null) => void;
   generateImage: () => Promise<void>;
+  stopGeneration: () => void;
   loadHistory: () => Promise<void>;
   loadFromGallery: (item: Generation) => void;
 }
@@ -95,8 +96,6 @@ export const useStudioStore = create<StudioState>((set, get) => ({
   toggleRight: () => set((s) => ({ isRightOpen: !s.isRightOpen })),
 
   generateImage: async () => {
-    if (get().isGenerating) return; // Prevent double clicks and spam
-    
     const { prompt, aspectRatio, aiModel, creativity } = get();
     if (!prompt.trim()) return;
 
@@ -169,8 +168,7 @@ export const useStudioStore = create<StudioState>((set, get) => ({
 
       const previewData: PreviewResponse = await previewRes.json();
       if (!previewData || !previewData.success || !previewData.image_url) {
-        set({ isGenerating: false, error: previewData?.message || "Failed to generate preview image." });
-        return; // Stop here, do not proceed to HQ or Database
+        throw new Error(previewData?.message || "Failed to generate preview image.");
       }
 
       finalImageToSave = previewData.image_url;
@@ -236,6 +234,14 @@ export const useStudioStore = create<StudioState>((set, get) => ({
     } finally {
       console.info(`✅ FINAL IMAGE SAVED. Source: [${imageSource}]`);
       set({ isUpgrading: false, activeSource: imageSource });
+    }
+  },
+
+  stopGeneration: () => {
+    const { abortController, isGenerating } = get();
+    if (isGenerating && abortController) {
+      abortController.abort();
+      set({ isGenerating: false, isUpgrading: false });
     }
   },
 

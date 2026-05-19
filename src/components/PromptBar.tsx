@@ -1,10 +1,10 @@
 "use client";
 
 import { useStudioStore } from '@/store/useStudioStore';
-import { Image as ImageIcon, Video, ArrowUp, Dices, Loader2 } from 'lucide-react';
+import { Image as ImageIcon, Video, ArrowUp, Dices, Square } from 'lucide-react';
 
 export function PromptBar() {
-  const { prompt, setPrompt, generateImage, isGenerating } = useStudioStore();
+  const { prompt, setPrompt, generateImage, isGenerating, stopGeneration } = useStudioStore();
 
   const handleGenerate = () => {
     if (!prompt.trim() || isGenerating) return;
@@ -66,12 +66,16 @@ export function PromptBar() {
           </div>
 
           <button
-            onClick={handleGenerate}
-            disabled={!prompt.trim() || isGenerating}
-            className="flex items-center justify-center w-10 h-10 rounded-full bg-[#8b5cf6] hover:bg-purple-500 disabled:bg-zinc-800 disabled:text-zinc-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all text-white shadow-[0_0_15px_rgba(139,92,246,0.3)] disabled:shadow-none"
+            onClick={isGenerating ? stopGeneration : handleGenerate}
+            disabled={!isGenerating && !prompt.trim()}
+            className={`flex items-center justify-center w-10 h-10 rounded-full transition-colors text-white shadow-lg ${
+              isGenerating 
+                ? 'bg-red-500 hover:bg-red-600 shadow-[0_0_15px_rgba(239,68,68,0.3)]'
+                : 'bg-[#8b5cf6] hover:bg-purple-500 shadow-[0_0_15px_rgba(139,92,246,0.3)] disabled:opacity-50 disabled:cursor-not-allowed'
+            }`}
           >
             {isGenerating ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
+              <Square className="w-4 h-4 fill-current" />
             ) : (
               <ArrowUp className="w-4 h-4 stroke-[2.5]" />
             )}
