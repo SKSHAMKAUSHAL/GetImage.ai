@@ -112,19 +112,7 @@ export function MainCanvas() {
       <div className="absolute inset-0 opacity-[0.03] pointer-events-none"
         style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '24px 24px' }} />
 
-      {/* Error Toast */}
-      {error && !isGenerating && (
-        <div className="absolute top-6 z-50 flex items-center gap-3 bg-red-950/80 border border-red-500/50 text-red-200 px-6 py-4 rounded-xl shadow-2xl backdrop-blur-md">
-          <AlertCircle className="w-5 h-5 text-red-400 shrink-0" />
-          <span className="font-medium text-sm">{error}</span>
-          <button
-            onClick={() => { setError(null); generateImage(); }}
-            className="ml-4 p-2 bg-red-500/20 hover:bg-red-500/30 rounded-md transition-colors flex items-center gap-2 text-sm font-semibold"
-          >
-            <RefreshCcw className="w-4 h-4" /> Retry
-          </button>
-        </div>
-      )}
+
 
       <div className="relative w-full h-full max-w-4xl flex items-center justify-center">
 
@@ -141,7 +129,7 @@ export function MainCanvas() {
         </div>
 
         {/* Skeleton + Stopwatch (shown while API is running OR image is loading in browser) */}
-        {showSkeleton && (
+        {showSkeleton && !error && (
           <div className="absolute inset-0 flex items-center justify-center z-10 flex-col gap-6">
             <div className="relative w-full max-w-2xl aspect-[4/3] bg-zinc-800/50 border border-zinc-700/50 rounded-2xl overflow-hidden shadow-2xl">
               <div className="absolute inset-0 overflow-hidden">
@@ -150,6 +138,25 @@ export function MainCanvas() {
               <div className="absolute inset-0 flex items-center justify-center">
                 <StopwatchTimer isRunning={showSkeleton} />
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* Centered Error State */}
+        {error && !isGenerating && (
+          <div className="absolute inset-0 flex items-center justify-center z-20">
+            <div className="flex flex-col items-center gap-4 bg-zinc-900/80 backdrop-blur-xl border border-red-500/30 p-8 rounded-3xl shadow-[0_0_50px_rgba(239,68,68,0.15)] text-center max-w-md w-full mx-4">
+              <div className="w-16 h-16 rounded-full bg-red-500/10 flex items-center justify-center mb-2">
+                <AlertCircle className="w-8 h-8 text-red-400" />
+              </div>
+              <h3 className="text-xl font-semibold text-white">Generation Failed</h3>
+              <p className="text-sm text-zinc-400 leading-relaxed mb-4">{error}</p>
+              <button
+                onClick={() => { setError(null); generateImage(); }}
+                className="flex items-center gap-2 px-6 py-3 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-red-300 rounded-xl transition-all shadow-lg font-medium"
+              >
+                <RefreshCcw className="w-4 h-4" /> Try Again
+              </button>
             </div>
           </div>
         )}

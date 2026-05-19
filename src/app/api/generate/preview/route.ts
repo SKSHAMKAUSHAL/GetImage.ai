@@ -59,10 +59,10 @@ export async function POST(req: Request) {
     }
     
     const baseUrl = process.env.POLLINATIONS_PREVIEW_API_URL || "https://image.pollinations.ai/prompt/";
-    const aiUrl = `${baseUrl}${safePrompt}?width=${width}&height=${height}&model=turbo&nologo=true&seed=${randomSeed}`;
+    const aiUrl = `${baseUrl}${safePrompt}?width=${width}&height=${height}&nologo=true&seed=${randomSeed}`;
 
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 5000); // STRICT 5-SECOND KILL SWITCH
+    const timeoutId = setTimeout(() => controller.abort(), 8000); // STRICT 8-SECOND KILL SWITCH
 
     try {
       const response = await fetch(aiUrl, {
@@ -93,17 +93,10 @@ export async function POST(req: Request) {
       clearTimeout(timeoutId);
       console.warn("Preview generation error/timeout, using fallback:", fetchError);
       
-      const fallbackUrl = process.env.FALLBACK_IMAGE_URL || `https://picsum.photos/seed/${randomSeed}/1024/1024`;
-      const fallbackResponse = await fetch(fallbackUrl);
-      const fallbackBuffer = await fallbackResponse.arrayBuffer();
-      const fallbackBase64 = `data:image/jpeg;base64,${Buffer.from(fallbackBuffer).toString("base64")}`;
-      
       return NextResponse.json({ 
-        success: true, 
-        image_url: fallbackBase64,
-        enhanced_prompt: enhancedPrompt || "Fallback placeholder",
-        message: "AI busy. Using fallback."
-      });
+        success: false, 
+        message: "The AI generation servers are currently cooling down. Please wait 10 seconds and try again." 
+      }, { status: 200 });
     }
   } catch (error) {
     console.warn("Preview route top-level error:", error);

@@ -169,7 +169,8 @@ export const useStudioStore = create<StudioState>((set, get) => ({
 
       const previewData: PreviewResponse = await previewRes.json();
       if (!previewData || !previewData.success || !previewData.image_url) {
-        throw new Error(previewData?.message || "Failed to generate preview image.");
+        set({ isGenerating: false, error: previewData?.message || "Failed to generate preview image." });
+        return; // Stop here, do not proceed to HQ or Database
       }
 
       finalImageToSave = previewData.image_url;

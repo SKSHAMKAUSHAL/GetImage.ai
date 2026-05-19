@@ -28,7 +28,7 @@ export async function POST(req: Request) {
 
     try {
       if (useHuggingFace) {
-        const hfUrl = process.env.HUGGINGFACE_API_URL || "https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-xl-base-1.0";
+        const hfUrl = process.env.HUGGINGFACE_API_URL || "https://api-inference.huggingface.co/models/runwayml/stable-diffusion-v1-5";
         res = await fetch(hfUrl, {
           method: "POST",
           signal: controller.signal,
@@ -58,7 +58,7 @@ export async function POST(req: Request) {
 
       const contentType = res.headers.get("content-type") || "";
       if (contentType.includes("application/json") || !contentType.includes("image/") || !res.ok) {
-        return NextResponse.json({ success: false, message: "HQ Timeout" }, { status: 200 });
+        return NextResponse.json({ success: false, message: "Hugging Face is busy." }, { status: 200 });
       }
 
       const arrayBuffer = await res.arrayBuffer();
@@ -70,10 +70,10 @@ export async function POST(req: Request) {
     } catch (fetchError) {
       clearTimeout(timeoutId);
       console.warn("HQ generation error/timeout:", fetchError);
-      return NextResponse.json({ success: false, message: "HQ Timeout" }, { status: 200 });
+      return NextResponse.json({ success: false, message: "Hugging Face is busy." }, { status: 200 });
     }
   } catch (error: any) {
     console.warn("HQ route error:", (error as Error)?.message || String(error));
-    return NextResponse.json({ success: false, message: "HQ Timeout" }, { status: 200 });
+    return NextResponse.json({ success: false, message: "Hugging Face is busy." }, { status: 200 });
   }
 }
