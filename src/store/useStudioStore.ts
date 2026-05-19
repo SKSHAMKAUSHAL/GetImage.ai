@@ -95,6 +95,8 @@ export const useStudioStore = create<StudioState>((set, get) => ({
   toggleRight: () => set((s) => ({ isRightOpen: !s.isRightOpen })),
 
   generateImage: async () => {
+    if (get().isGenerating) return; // Prevent double clicks and spam
+    
     const { prompt, aspectRatio, aiModel, creativity } = get();
     if (!prompt.trim()) return;
 

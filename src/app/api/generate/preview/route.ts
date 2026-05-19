@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 
-export const maxDuration = 60;
 
 export async function POST(req: Request) {
   try {
@@ -62,49 +61,39 @@ export async function POST(req: Request) {
     const baseUrl = process.env.POLLINATIONS_PREVIEW_API_URL || "https://image.pollinations.ai/prompt/";
     const aiUrl = `${baseUrl}${safePrompt}?width=${width}&height=${height}&model=turbo&nologo=true&seed=${randomSeed}`;
 
-    const response = await fetch(aiUrl, {
-      headers: {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-        "Accept": "image/jpeg"
-      }
-    });
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000); // STRICT 5-SECOND KILL SWITCH
 
-    const contentType = response.headers.get("content-type") || "";
-
-    // If the response is JSON (an error from the API)
-    if (contentType.includes("application/json")) {
-      const errorData = await response.json();
-      // Log server-side error; surface a soft failure to client
-      console.warn("AI API returned JSON instead of image;", JSON.stringify(errorData));
-      throw new Error("AI API returned an error");
-    }
-
-    // If it's not an image, throw an error
-    if (!contentType.includes("image/")) {
-      throw new Error("Invalid content type received: " + contentType);
-    }
-
-    if (!response.ok) {
-      throw new Error(`Pollinations API failed with status: ${response.status}`);
-    }
-
-    const arrayBuffer = await response.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
-    const base64Image = `data:image/jpeg;base64,${buffer.toString("base64")}`;
-
-    // preview generated
-
-    return NextResponse.json({ 
-      success: true, 
-      image_url: base64Image,
-      enhanced_prompt: enhancedPrompt
-    });
-
-  } catch (error) {
-    console.warn("Preview generation error:", (error as Error)?.message || String(error));
-    
     try {
-      const fallbackUrl = process.env.FALLBACK_IMAGE_URL || "https://picsum.photos/1024/1024";
+      const response = await fetch(aiUrl, {
+        signal: controller.signal,
+        headers: {
+          "User-Agent": "ImagineApp/1.0",
+          "Accept": "image/jpeg"
+        }
+      });
+      clearTimeout(timeoutId);
+
+      const contentType = response.headers.get("content-type") || "";
+
+      if (!response.ok || !contentType.includes("image/")) {
+        throw new Error("Invalid response or API error");
+      }
+
+      const arrayBuffer = await response.arrayBuffer();
+      const buffer = Buffer.from(arrayBuffer);
+      const base64Image = `data:image/jpeg;base64,${buffer.toString("base64")}`;
+
+      return NextResponse.json({ 
+        success: true, 
+        image_url: base64Image,
+        enhanced_prompt: enhancedPrompt
+      });
+    } catch (fetchError) {
+      clearTimeout(timeoutId);
+      console.warn("Preview generation error/timeout, using fallback:", fetchError);
+      
+      const fallbackUrl = process.env.FALLBACK_IMAGE_URL || `https://picsum.photos/seed/${randomSeed}/1024/1024`;
       const fallbackResponse = await fetch(fallbackUrl);
       const fallbackBuffer = await fallbackResponse.arrayBuffer();
       const fallbackBase64 = `data:image/jpeg;base64,${Buffer.from(fallbackBuffer).toString("base64")}`;
@@ -112,12 +101,12 @@ export async function POST(req: Request) {
       return NextResponse.json({ 
         success: true, 
         image_url: fallbackBase64,
-        enhanced_prompt: "Fallback placeholder",
-        warning: "AI was busy. Showing placeholder."
+        enhanced_prompt: enhancedPrompt || "Fallback placeholder",
+        message: "AI busy. Using fallback."
       });
-    } catch (fallbackError) {
-      // ensure graceful soft-fail with 200 for frontend handling
-      return NextResponse.json({ success: false }, { status: 200 });
     }
+  } catch (error) {
+    console.warn("Preview route top-level error:", error);
+    return NextResponse.json({ success: false }, { status: 200 });
   }
 }

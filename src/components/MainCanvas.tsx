@@ -164,28 +164,30 @@ export function MainCanvas() {
               src={currentImage}
               alt="Generated Result"
               crossOrigin="anonymous"
-              className="max-w-full max-h-[80vh] rounded-2xl shadow-2xl ring-1 ring-zinc-700/50 object-contain"
+              className="max-w-full max-h-[70vh] rounded-xl shadow-[0_0_50px_rgba(0,0,0,0.5)] object-contain"
               onLoad={handleImageLoad}
               onError={handleImageError}
             />
 
             {/* Action Buttons */}
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0 flex gap-2">
+            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-4 group-hover:translate-y-0 flex items-center gap-3 bg-white/10 backdrop-blur-xl border border-white/20 p-2 rounded-2xl shadow-2xl">
               <button
                 onClick={() => setIsCropModalOpen(true)}
-                className="flex items-center gap-2 bg-zinc-900/90 border border-zinc-700 hover:border-purple-500/50 text-white px-4 py-2 rounded-lg backdrop-blur-md shadow-xl transition-all"
+                className="flex items-center justify-center w-10 h-10 rounded-xl bg-white/10 hover:bg-white/20 text-white transition-all"
+                title="Crop & Edit"
               >
-                <Crop className="w-4 h-4" />
-                <span className="text-sm font-medium">Crop & Edit</span>
+                <Crop className="w-5 h-5" />
               </button>
+              <div className="w-px h-6 bg-white/20" />
               <a
                 href={currentImage}
                 download="generation.jpg"
                 target="_blank"
                 rel="noreferrer"
-                className="flex items-center gap-2 bg-zinc-900/90 border border-zinc-700 hover:border-purple-500/50 text-white px-4 py-2 rounded-lg backdrop-blur-md shadow-xl transition-all"
+                className="flex items-center justify-center w-10 h-10 rounded-xl bg-white/10 hover:bg-white/20 text-white transition-all"
+                title="Download"
               >
-                <Download className="w-4 h-4" />
+                <Download className="w-5 h-5" />
               </a>
             </div>
 

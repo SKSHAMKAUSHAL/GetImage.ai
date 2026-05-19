@@ -68,7 +68,7 @@ export function PromptBar() {
           <button
             onClick={handleGenerate}
             disabled={!prompt.trim() || isGenerating}
-            className="flex items-center justify-center w-10 h-10 rounded-full bg-[#8b5cf6] hover:bg-purple-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-white shadow-[0_0_15px_rgba(139,92,246,0.3)]"
+            className="flex items-center justify-center w-10 h-10 rounded-full bg-[#8b5cf6] hover:bg-purple-500 disabled:bg-zinc-800 disabled:text-zinc-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all text-white shadow-[0_0_15px_rgba(139,92,246,0.3)] disabled:shadow-none"
           >
             {isGenerating ? (
               <Loader2 className="w-4 h-4 animate-spin" />

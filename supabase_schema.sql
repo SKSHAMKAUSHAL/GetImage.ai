@@ -22,3 +22,9 @@ CREATE POLICY "Allow public inserts"
 ON public.generations
 FOR INSERT
 WITH CHECK (true);
+
+-- Policy to allow updates (required for HQ upgrade)
+CREATE POLICY "Allow public updates"
+ON public.generations
+FOR UPDATE
+USING (true);
