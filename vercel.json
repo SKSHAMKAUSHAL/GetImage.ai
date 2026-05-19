@@ -1,12 +1,4 @@
 {
-  "version": 2,
-  "framework": "nextjs",
-  "builds": [
-    {
-      "src": "package.json",
-      "use": "@vercel/next"
-    }
-  ],
   "headers": [
     {
       "source": "/(.*)",
@@ -25,5 +17,13 @@
         }
       ]
     }
-  ]
+  ],
+  "functions": {
+    "src/app/api/generate/preview/route.ts": {
+      "maxDuration": 60
+    },
+    "src/app/api/generate/hq/route.ts": {
+      "maxDuration": 60
+    }
+  }
 }
