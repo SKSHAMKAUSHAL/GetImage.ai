@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   title: "getImage.ai",
   description: "getImage.ai — Turn imagination into visual reality with fast AI image generation.",
   icons: {
-    icon: "/logo.png",
+    icon: "/Logo.png",
   },
 };
 

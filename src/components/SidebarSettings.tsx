@@ -23,7 +23,7 @@ export function SidebarSettings() {
     <div className="w-[260px] bg-[#050505] border-r border-[#1a1a1a] p-5 flex flex-col gap-8 h-full text-zinc-300 relative z-20 shadow-2xl">
       {/* Header */}
       <Link href="/" className="flex items-center gap-3 pb-2 border-b border-white/5 hover:opacity-80 transition-opacity">
-        <img src="/logo.png" alt="Logo" className="w-8 h-8 object-contain" />
+        <img src="/Logo.png" alt="Logo" className="w-8 h-8 object-contain" />
         <h2 className="font-bold text-white tracking-wide text-sm bg-clip-text text-transparent bg-gradient-to-r from-white to-zinc-400">
           Studio Canvas
         </h2>
